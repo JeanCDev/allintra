@@ -1,11 +1,8 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react";
 
 import users from "../data/users.json";
-
-type User = {
-  name: string;
-  username: string;
-};
+import { User } from "../utils/types";
+import Loading from "../components/Loading";
 
 type AuthContextType = {
   user: User | null;
@@ -17,20 +14,44 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (username: string, password: string) => {
+  const login = useCallback((username: string, password: string) => {
+    setLoading(true);
     const found = users.find((u) => u.username === username && u.password === password);
 
     if (found) {
-      setUser({ username: found.username, name: found.name });
+      localStorage.setItem("user", JSON.stringify(found));
 
+      setUser(found);
+
+      setLoading(false);
       return true;
     }
 
+    setLoading(false);
     return false;
-  };
+  }, []);
 
-  const logout = () => setUser(null);
+  const logout = useCallback(() => {
+    setUser(null);
+
+    localStorage.removeItem("user");
+  }, []);
+
+  const validate = useCallback(() => {
+    const localUser = localStorage.getItem("user");
+
+    if (localUser) {
+      const userInfo = JSON.parse(localUser);
+
+      setUser(userInfo);
+    }
+
+    setLoading(false);
+  }, []);
+
+  useEffect(validate, [validate]);
 
   return (
     <AuthContext.Provider value={{
@@ -38,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout
     }}>
-      {children}
+      {loading ? <Loading /> : children}
     </AuthContext.Provider>
   );
 };

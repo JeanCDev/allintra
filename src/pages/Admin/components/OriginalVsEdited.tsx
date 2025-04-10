@@ -1,42 +1,48 @@
 import DiffViewer from "react-diff-viewer";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+
+import { getMarkdownFile } from "../../../api/bitbucket";
+import { useSingleExecution } from "../../../hooks/useSingleExecution";
+
+import Loading from "../../../components/Loading";
 
 interface Props {
   path: string;
   editedContent: string;
 }
 
-export default function OriginalVsEdited({ path, editedContent }: Props) {
-  const [originalContent, setOriginalContent] = useState<string>("Carregando...");
+const OriginalVsEdited = ({ path, editedContent }: Props) => {
   const [loading, setLoading] = useState(true);
+  const [originalContent, setOriginalContent] = useState<string>("");
 
-  useEffect(() => {
-    const fetchOriginal = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch(
-          `https://bitbucket.org/allintra/teste-front-end/raw/main/${path}`
-        );
-        const text = await res.text();
-        setOriginalContent(text);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOriginal = useCallback(async() => {
+    setLoading(true);
 
-    fetchOriginal();
+    try {
+      const text = await getMarkdownFile(path);
+
+      setOriginalContent(text);
+    } finally {
+      setLoading(false);
+    }
   }, [path]);
 
-  if (loading) return <p>Carregando comparação...</p>;
+  useSingleExecution(fetchOriginal);
+
+  if (loading) return <Loading/>;
 
   return (
-    <DiffViewer
-      oldValue={originalContent}
-      newValue={editedContent}
-      splitView={true}
-      showDiffOnly={false}
-      leftTitle="Original"
-      rightTitle="Editado"
-    />
+    <div className="overflow-x-scroll">
+      <DiffViewer
+        splitView
+        showDiffOnly
+        leftTitle="Original"
+        rightTitle="Editado"
+        newValue={editedContent}
+        oldValue={originalContent}
+      />
+    </div>
   );
-}
+};
+
+export default OriginalVsEdited;

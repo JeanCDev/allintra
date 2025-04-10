@@ -8,7 +8,7 @@ const BASE_URL = "https://api.bitbucket.org/2.0/repositories/allintra/teste-fron
 /**
  * Busca todos os arquivos .md dentro de /docs, incluindo subpastas
  */
-export async function fetchDocsList(): Promise<BitbucketItem[]> {
+export const fetchDocsList = async (): Promise<BitbucketItem[]> =>{
   const results: BitbucketItem[] = [];
 
   async function fetchRecursive(folder: string) {
@@ -29,3 +29,22 @@ export async function fetchDocsList(): Promise<BitbucketItem[]> {
 
   return results;
 }
+
+export const getMarkdownFile = async (path: string): Promise<string> => {
+  const url = `${BASE_URL}/${path}`;
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error(`Erro ao buscar arquivo: ${path}`);
+  }
+
+  return res.text();
+};
+
+export const getSidebar = async (): Promise<string> => {
+  return getMarkdownFile("docs/_sidebar.md");
+};
+
+export const getHomepage = async (): Promise<string> => {
+  return getMarkdownFile("docs/homepage.md");
+};

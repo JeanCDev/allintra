@@ -36,31 +36,37 @@ A aplicação estará disponível em [http://localhost:5173](http://localhost:51
 
 O sistema possui uma **área de administração simulada**.  
 O login é falso (sem backend) e usa dados locais armazenados em um `.json`.
+A autenticação é gerenciada via **Context API**, apenas para simular o fluxo de login/logout.
 
-- **Caminho do arquivo:** `src/data/fakeUser.json`
+- **Caminho do arquivo:** `src/data/users.json`
 
-**Exemplo de credenciais:**
+Para editar os arquivos .md é necessário fazer o login com o usuário admin
+
+**Credenciais de login padrão:**
 
 ```json
 {
   "username": "admin",
-  "password": "123456"
+  "password": "1234"
 }
 ```
+Os arquivos editados ficam marcados como **Modificado** na navegação lateral e na navegação do header
 
-A autenticação é gerenciada via **Context API**, apenas para simular o fluxo de login/logout.
+Para visualizar os arquivos editados é necessário estar logado e clicar no botão de navegação no header para ser redirecionado para a tela de **Administração**
 
 ## 🧠 Organização do Código
 
 - `src/pages` → Telas principais (`Home`, `Admin`)
-- `src/components` → Componentes reutilizáveis (ex: `OriginalVsEdited.tsx`)
+- `src/components` → Componentes reutilizáveis
 - `src/api` → Consumo da API do Bitbucket
 - `src/context` → Contexto de autenticação
 - `src/utils` → Funções auxiliares (filtros, estruturação, etc)
+- `src/hooks` → Hooks personalizados
+- `src/assets` → Imagens e arquivos estáticos
 
 ## 📂 Origem dos Arquivos Markdown
 
-Todos os arquivos são carregados diretamente da pasta `/docs` do repositório:  
+Todos os arquivos são carregados diretamente da pasta `/docs` do repositório:
 👉 [https://bitbucket.org/allintra/teste-front-end/src/main/docs](https://bitbucket.org/allintra/teste-front-end/src/main/docs)
 
 ---
