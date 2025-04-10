@@ -32,6 +32,12 @@ npm run dev
 
 A aplicação estará disponível em [http://localhost:5173](http://localhost:5173).
 
+## Acesso ao projeto na Vercel
+
+O projeto também está hospedado na Vercel, não necessitando que o mesmo seja rodado localmente.
+
+Para acessar o projeto na Vercel, clique [aqui](https://allintra-kappa.vercel.app).
+
 ## 🔐 Login (Simulado)
 
 O sistema possui uma **área de administração simulada**.  
