@@ -32,7 +32,7 @@ const Sidebar = ({
               <li key={idx} className="flex items-center justify-between">
                 <button
                   onClick={onSelect.bind(null, child.path)}
-                  className="text-sm text-zinc-600 hover:underline text-left"
+                  className="text-sm text-zinc-600 hover:underline text-left overflow-hidden text-ellipsis"
                 >
                   {child.label}
                 </button>
