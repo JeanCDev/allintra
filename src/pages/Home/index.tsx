@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { getHomepage, getMarkdownFile, getSidebar } from "../../api/bitbucket";
 import { useSingleExecution } from "../../hooks/useSingleExecution";
+import { getHomepage, getMarkdownFile, getSidebar } from "../../api/bitbucket";
 
 import Header from "../../components/Header";
 import Sidebar from "./components/Sidebar";
@@ -10,10 +10,13 @@ import { EditedMarkdownFile, SidebarItem } from "../../utils/types";
 import MarkdownPreviewAndEditor from "./components/MarkdownPreviewAndEditor";
 
 const Home = () => {
+  const storage = localStorage.getItem("editedMarkdownFiles");
+  const docs: EditedMarkdownFile[] = useMemo(() => storage ? JSON.parse(storage) : [], [storage]);
+
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState<string>("");
   const [items, setItems] = useState<SidebarItem[]>([]);
-  const [currentPath, setCurrentPath] = useState<string>("");
+  const [currentPath, setCurrentPath] = useState<string>("docs/homepage.md");
 
   const fetchSidebar = useCallback(async () => {
     try {
@@ -49,6 +52,13 @@ const Home = () => {
   }, []);
 
   const loadHome = useCallback(async() => {
+    const item = docs.find((doc) => doc.path === "docs/homepage.md");
+
+    if (item) {
+      setLoading(false);
+      return setContent(item.content);
+    }
+
     try {
       const data = await getHomepage();
 
@@ -56,14 +66,12 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [docs]);
 
   const loadFile = useCallback(async(path: string) => {
     setLoading(true);
     setCurrentPath(`docs/${path}`);
 
-    const storage = localStorage.getItem("editedMarkdownFiles");
-    const docs: EditedMarkdownFile[] = storage ? JSON.parse(storage) : [];
     const item = docs.find((doc) => doc.path === `docs/${path}`);
 
     if (item) {
@@ -80,7 +88,7 @@ const Home = () => {
     }
 
     setLoading(false);
-  }, []);
+  }, [docs]);
 
   useSingleExecution(() => {
     fetchSidebar();

@@ -21,7 +21,7 @@ const MarkdownPreviewAndEditor = ({
   const [draftContent, setDraftContent] = useState(content);
 
   const handleSave = () => {
-    const editedDocs = JSON.parse(localStorage.getItem("editedDocs") || "[]");
+    const editedDocs = JSON.parse(localStorage.getItem("editedMarkdownFiles") || "[]");
 
     const newEntry = {
       path: currentPath,
